@@ -113,7 +113,7 @@ def play_the_game(sw):
     _all_on(sw)
     for i in sw.buttons_on:
         hide(i.spr)
-    _stepper(sw,0,True)
+    _stepper(sw,0,False)
     sw.counter = 0
 
 #
@@ -184,13 +184,15 @@ def _button_release_cb(win, event, sw):
             if sw.seq[sw.level][sw.counter] == i: # correct reponse
                 sw.counter += 1
                 if sw.counter == len(sw.seq[sw.level]):
-                    print "solved level %d" % (sw.level)
                     _all_on(sw)
                     sw.counter = 0
                     sw.level += 1
                     if sw.level == len(sw.seq):
                         sw.level = 0
                     gobject.timeout_add(500, _all_off, sw)
+                    sw.activity.level_label.set_text(
+                        "%s %d" % (_("Level"),sw.level+1))
+                    gobject.timeout_add(2000, play_the_game, sw)
             else: # incorrect response
                 _all_gone(sw)
                 gobject.timeout_add(1000, _all_off, sw)

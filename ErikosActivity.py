@@ -75,6 +75,17 @@ class ErikosActivity(activity.Activity):
             self.play.show()
 
             separator = gtk.SeparatorToolItem()
+            separator.show()
+            toolbar_box.toolbar.insert(separator, -1)
+
+            # Label for showing level
+            self.level_label = gtk.Label("%s %d" % (_("Level"),1))
+            self.level_label.show()
+            level_toolitem = gtk.ToolItem()
+            level_toolitem.add(self.level_label)
+            toolbar_box.toolbar.insert(level_toolitem,-1)
+
+            separator = gtk.SeparatorToolItem()
             separator.props.draw = False
             separator.set_expand(True)
             separator.show()
@@ -112,6 +123,7 @@ class ErikosActivity(activity.Activity):
                                     os.path.join(activity.get_bundle_path(), \
                                                  'images/'), \
                                     self)
+        self.tw.activity = self
 
         # Read the level from the Journal
         try:
