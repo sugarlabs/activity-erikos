@@ -79,6 +79,7 @@ def new_window(canvas, path, parent=None):
     sw.level = 0
     sw.seq = gen_seq(10)
     sw.counter = 0
+    sw.playpushed = False
 
     # Open the buttons
     sw.buttons_off = [Sprite(sw,"Aoff",sw.width/2-W/2,H/2,W/2,H/2),\
@@ -110,7 +111,7 @@ def new_window(canvas, path, parent=None):
 # Play the sample sequence for the current level
 #
 def play_the_game(sw):
-    _all_on(sw)
+    sw.playpushed = True
     for i in sw.buttons_on:
         hide(i.spr)
     _stepper(sw,0,False)
@@ -181,23 +182,28 @@ def _button_release_cb(win, event, sw):
             inval(sw.buttons_on[i].spr)
             gobject.idle_add(__play_sound_cb, sw.sound_files[i])
             gobject.timeout_add(500,hide,sw.buttons_on[i].spr)
+            if sw.playpushed is False:
+                sw.press = None
+                return
             if sw.seq[sw.level][sw.counter] == i: # correct reponse
                 sw.counter += 1
                 if sw.counter == len(sw.seq[sw.level]):
-                    _all_on(sw)
+                    gobject.timeout_add(1000, _all_on, sw)
                     sw.counter = 0
                     sw.level += 1
-                    if sw.level == len(sw.seq):
-                        sw.level = 0
-                    gobject.timeout_add(500, _all_off, sw)
+                    gobject.timeout_add(1500, _all_off, sw)
                     sw.activity.level_label.set_text(
                         "%s %d" % (_("Level"),sw.level+1))
-                    gobject.timeout_add(2000, play_the_game, sw)
+                    if sw.level < len(sw.seq):
+                        gobject.timeout_add(3000, play_the_game, sw)
+                    else:
+                        sw.playpushed = False
+                        sw.level = 0
+                        sw.seq = gen_seq(10)
             else: # incorrect response
                 _all_gone(sw)
                 gobject.timeout_add(1000, _all_off, sw)
                 sw.counter = 0
-
     sw.press = None
 
 #
