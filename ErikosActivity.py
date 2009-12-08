@@ -120,7 +120,8 @@ class ErikosActivity(activity.Activity):
             pass
 
     def _play_cb(self, button):
-        window._play_the_game(self.tw)
+        print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
+        window.play_the_game(self.tw)
         return True
 
     """

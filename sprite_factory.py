@@ -39,7 +39,7 @@ class Sprite:
         else:
             self.spr.label = ""
 
-    def draw_slider(self, layer=1000):
+    def draw_sprite(self, layer=1000):
         setlayer(self.spr, layer)
         draw(self.spr)
 

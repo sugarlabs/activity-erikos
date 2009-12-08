@@ -109,21 +109,27 @@ def new_window(canvas, path, parent=None):
 #
 # Play
 #
-def _play_the_game(tw):
+def play_the_game(tw):
+    print "############################### " + str(tw.level)
     _all_on(tw)
     for i in tw.buttons_on:
         hide(i.spr)
-    for i in tw.seq[tw.level]:
-        draw(tw.buttons_on[i].spr)
-        inval(tw.buttons_on[i].spr)
-        # need to learn how timeouts really work...
-        print tw.sound_files[i]
-        os.system('csound ' + tw.sound_files[i]  + \
-                  '/temp.csd >/dev/null 2>/dev/null')
-        sleep(1)
-        gobject.timeout_add(1000,hide,tw.buttons_on[i].spr)
-        # hide(tw.buttons_on[i].spr)
+    _stepper(tw,0)
     tw.counter = 0
+
+#
+# Display next sound/graphic in sequence
+#
+def _stepper(tw,i):
+     if i > 0:
+         hide(tw.buttons_on[tw.seq[tw.level][i-1]].spr)
+     if i < len(tw.seq[tw.level]):
+         tw.buttons_on[tw.seq[tw.level][i]].draw_sprite(1500)
+         inval(tw.buttons_on[tw.seq[tw.level][i]].spr)
+         gobject.idle_add(__play_sound_cb, tw.sound_files[tw.seq[tw.level][i]])
+         tw.timeout_id = gobject.timeout_add(1000,_stepper,tw,i+1)
+     else:
+         tw.timeout_id = gobject.timeout_add(1000,_all_off,tw)
 
 #
 # Button press
@@ -155,57 +161,46 @@ def _mouse_move_cb(win, event, tw):
 #
 # Button release
 #
+def __play_sound_cb(sound):
+#    os.system('csound ' + sound + '/temp.csd >/dev/null 2>/dev/null')
+    os.system('csound ' + sound)
+
 def _button_release_cb(win, event, tw):
     if tw.press == None:
         return True
     for i in range (0,4):
         if tw.press == tw.buttons_off[i].spr:
-            draw(tw.buttons_on[i].spr)
+            tw.buttons_on[i].draw_sprite(1500)
             inval(tw.buttons_on[i].spr)
-            # gobject.timeout_add(1000,hide,tw.buttons_on[i].spr)
-            print tw.sound_files[i]
-            os.system('csound ' + tw.sound_files[i])
-            # os.system('csound ' + tw.sound_files[i] + \
-            #          '/temp.csd >/dev/null 2>/dev/null')
-            sleep(1)
-            hide(tw.buttons_on[i].spr)
+            gobject.idle_add(__play_sound_cb, tw.sound_files[i])
+            gobject.timeout_add(500,hide,tw.buttons_on[i].spr)
+            print "level %d; counter %d; i is %d" % (tw.level,tw.counter,i)
             if tw.seq[tw.level][tw.counter] == i: # correct reponse
-                """
-                print str(tw.counter) + ": made a match between " + \
-                      str(i) + " and " + str(tw.seq[tw.counter])
-                """
                 tw.counter += 1
                 if tw.counter == len(tw.seq[tw.level]):
+                    print "solved level %d" % (tw.level)
                     _all_on(tw)
                     tw.counter = 0
                     tw.level += 1
                     if tw.level == len(tw.seq):
                         tw.level = 0
-                    sleep(1)
-                    _all_off(tw)
+                    gobject.timeout_add(500, _all_off, tw)
             else: # incorrect response
-                """
-                print "mismatch: " + str(i) + " is not " + \
-                      str(tw.seq[tw.counter])
-                """
-
-                """
                 _all_gone(tw)
-                sleep(1)
-                _all_off(tw)
-                """
+                gobject.timeout_add(1000, _all_off, tw)
                 tw.counter = 0
+
     tw.press = None
 
 def _all_on(tw):
     for i in tw.buttons_off:
-        i.draw_slider()
+        i.draw_sprite(1000)
     for i in tw.buttons_on:
-        i.draw_slider()
+        i.draw_sprite(1500)
 
 def _all_off(tw):
     for i in tw.buttons_off:
-        i.draw_slider()
+        i.draw_sprite(1000)
     for i in tw.buttons_on:
         hide(i.spr)
 
