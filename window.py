@@ -38,187 +38,209 @@ except:
 
 from sprite_factory import *
 
-class srWindow: pass
+class swWindow: pass
 
 #
 # handle launch from both within and without of Sugar environment 
 #
 def new_window(canvas, path, parent=None):
-    tw = srWindow()
-    tw.path = path
-    tw.activity = parent
+    sw = swWindow()
+    sw.path = path
+    sw.activity = parent
 
     # starting from command line
     # we have to do all the work that was done in CardSortActivity.py
     if parent is None:
-        tw.sugar = False
-        tw.canvas = canvas
+        sw.sugar = False
+        sw.canvas = canvas
 
     # starting from Sugar
     else:
-        tw.sugar = True
-        tw.canvas = canvas
+        sw.sugar = True
+        sw.canvas = canvas
         parent.show_all()
 
-    tw.canvas.set_flags(gtk.CAN_FOCUS)
-    tw.canvas.add_events(gtk.gdk.BUTTON_PRESS_MASK)
-    tw.canvas.add_events(gtk.gdk.BUTTON_RELEASE_MASK)
-    tw.canvas.add_events(gtk.gdk.POINTER_MOTION_MASK)
-    tw.canvas.connect("expose-event", _expose_cb, tw)
-    tw.canvas.connect("button-press-event", _button_press_cb, tw)
-    tw.canvas.connect("button-release-event", _button_release_cb, tw)
-    tw.canvas.connect("motion-notify-event", _mouse_move_cb, tw)
-    tw.width = gtk.gdk.screen_width()
-    tw.height = gtk.gdk.screen_height()-GRID_CELL_SIZE
-    tw.area = tw.canvas.window
-    tw.gc = tw.area.new_gc()
-    tw.cm = tw.gc.get_colormap()
-    tw.msgcolor = tw.cm.alloc_color('black')
-    tw.sprites = []
-    tw.scale = 1
-    tw.level = 0
-    tw.seq = gen_seq(10)
-    tw.counter = 0
+    sw.canvas.set_flags(gtk.CAN_FOCUS)
+    sw.canvas.add_events(gtk.gdk.BUTTON_PRESS_MASK)
+    sw.canvas.add_events(gtk.gdk.BUTTON_RELEASE_MASK)
+    sw.canvas.add_events(gtk.gdk.POINTER_MOTION_MASK)
+    sw.canvas.connect("expose-event", _expose_cb, sw)
+    sw.canvas.connect("button-press-event", _button_press_cb, sw)
+    sw.canvas.connect("button-release-event", _button_release_cb, sw)
+    sw.canvas.connect("motion-notify-event", _mouse_move_cb, sw)
+    sw.width = gtk.gdk.screen_width()
+    sw.height = gtk.gdk.screen_height()-GRID_CELL_SIZE
+    sw.area = sw.canvas.window
+    sw.gc = sw.area.new_gc()
+    sw.cm = sw.gc.get_colormap()
+    sw.msgcolor = sw.cm.alloc_color('black')
+    sw.sprites = []
+    sw.scale = 1
+    sw.level = 0
+    sw.seq = gen_seq(10)
+    sw.counter = 0
 
-    # Open the sliders
-    tw.buttons_off = [Sprite(tw,"Aoff",tw.width/2-W/2,H/2,W/2,H/2),\
-                      Sprite(tw,"Boff",tw.width/2-W,H,W/2,H/2),\
-                      Sprite(tw,"Doff",tw.width/2,H,W/2,H/2),\
-                      Sprite(tw,"Coff",tw.width/2-W/2,H+H/2,W/2,H/2)]
-    tw.buttons_on  = [Sprite(tw,"Aon",tw.width/2-W/2,H/2,W/2,H/2),\
-                      Sprite(tw,"Bon",tw.width/2-W,H,W/2,H/2),\
-                      Sprite(tw,"Don",tw.width/2,H,W/2,H/2),\
-                      Sprite(tw,"Con",tw.width/2-W/2,H+H/2,W/2,H/2)]
-    tw.sounds = ['dog','sheep','cat','bird']
-    tw.sound_files = []
+    # Open the buttons
+    sw.buttons_off = [Sprite(sw,"Aoff",sw.width/2-W/2,H/2,W/2,H/2),\
+                      Sprite(sw,"Boff",sw.width/2-W,H,W/2,H/2),\
+                      Sprite(sw,"Doff",sw.width/2,H,W/2,H/2),\
+                      Sprite(sw,"Coff",sw.width/2-W/2,H+H/2,W/2,H/2)]
+    sw.buttons_on  = [Sprite(sw,"Aon",sw.width/2-W/2,H/2,W/2,H/2),\
+                      Sprite(sw,"Bon",sw.width/2-W,H,W/2,H/2),\
+                      Sprite(sw,"Don",sw.width/2,H,W/2,H/2),\
+                      Sprite(sw,"Con",sw.width/2-W/2,H+H/2,W/2,H/2)]
+    sw.sounds = ['dog','sheep','cat','bird']
+    sw.sound_files = []
 
-    for i in tw.sounds:
+    # Save sounds for repeated play
+    for i in sw.sounds:
         playWave(i)
-        path = tw.activity.get_activity_root() + "/instance/" + i + ".csd"
-        tw.sound_files.append(path)
+        path = sw.activity.get_activity_root() + "/instance/" + i + ".csd"
+        sw.sound_files.append(path)
         audioWrite(path)
 
-    _all_off(tw)
+    _all_off(sw)
 
     # Start calculating
-    tw.press = None
-    tw.dragpos = 0
-    return tw
+    sw.press = None
+    sw.dragpos = 0
+    return sw
 
 #
-# Play
+# Play the sample sequence for the current level
 #
-def play_the_game(tw):
-    print "############################### " + str(tw.level)
-    _all_on(tw)
-    for i in tw.buttons_on:
+def play_the_game(sw):
+    _all_on(sw)
+    for i in sw.buttons_on:
         hide(i.spr)
-    _stepper(tw,0,True)
-    tw.counter = 0
+    _stepper(sw,0,True)
+    sw.counter = 0
 
 #
-# Display next sound/graphic in sequence
+# Display next graphic/play next sound in sequence
+# Loop through twice: once to display the tile and once to pause between tiles
 #
-def _stepper(tw,i,j):
+def _stepper(sw,i,j):
      if i > 0:
-         hide(tw.buttons_on[tw.seq[tw.level][i-1]].spr)
+         hide(sw.buttons_on[sw.seq[sw.level][i-1]].spr)
      if j is True:
-         if i < len(tw.seq[tw.level]):
-             tw.buttons_on[tw.seq[tw.level][i]].draw_sprite(1500)
-             inval(tw.buttons_on[tw.seq[tw.level][i]].spr)
+         if i < len(sw.seq[sw.level]):
+             sw.buttons_on[sw.seq[sw.level][i]].draw_sprite(1500)
+             inval(sw.buttons_on[sw.seq[sw.level][i]].spr)
              gobject.idle_add(__play_sound_cb, 
-                              tw.sound_files[tw.seq[tw.level][i]])
-             tw.timeout_id = gobject.timeout_add(1000,_stepper,tw,i+1,False)
+                              sw.sound_files[sw.seq[sw.level][i]])
+             sw.timeout_id = gobject.timeout_add(1000,_stepper,sw,i+1,False)
          else:
-             tw.timeout_id = gobject.timeout_add(1000,_all_off,tw)
+             sw.timeout_id = gobject.timeout_add(1000,_all_off,sw)
      else:
-         tw.timeout_id = gobject.timeout_add(1000,_stepper,tw,i,True)
+         sw.timeout_id = gobject.timeout_add(1000,_stepper,sw,i,True)
 
 #
 # Button press
 #
-def _button_press_cb(win, event, tw):
+def _button_press_cb(win, event, sw):
     win.grab_focus()
     x, y = map(int, event.get_coords())
-    tw.dragpos = x
-    spr = findsprite(tw,(x,y))
-    tw.press = spr
+    sw.dragpos = x
+    spr = findsprite(sw,(x,y))
+    sw.press = spr
     return True
 
 #
 # Mouse move
 #
-def _mouse_move_cb(win, event, tw):
-    if tw.press is None:
-        tw.dragpos = 0
+def _mouse_move_cb(win, event, sw):
+    if sw.press is None:
+        sw.dragpos = 0
         return True
 
     win.grab_focus()
     x, y = map(int, event.get_coords())
 
-    dx = x-tw.dragpos
+    dx = x-sw.dragpos
 
     # reset drag position
-    tw.dragpos = x
+    sw.dragpos = x
 
 #
-# Button release
+# Play the csound associated with the button
 #
 def __play_sound_cb(sound):
 #    os.system('csound ' + sound + '/temp.csd >/dev/null 2>/dev/null')
     os.system('csound ' + sound)
 
-def _button_release_cb(win, event, tw):
-    if tw.press == None:
+#
+# Button release -- where the work happens
+#
+def _button_release_cb(win, event, sw):
+    if sw.press == None:
         return True
     for i in range (0,4):
-        if tw.press == tw.buttons_off[i].spr:
-            tw.buttons_on[i].draw_sprite(1500)
-            inval(tw.buttons_on[i].spr)
-            gobject.idle_add(__play_sound_cb, tw.sound_files[i])
-            gobject.timeout_add(500,hide,tw.buttons_on[i].spr)
-            if tw.seq[tw.level][tw.counter] == i: # correct reponse
-                tw.counter += 1
-                if tw.counter == len(tw.seq[tw.level]):
-                    print "solved level %d" % (tw.level)
-                    _all_on(tw)
-                    tw.counter = 0
-                    tw.level += 1
-                    if tw.level == len(tw.seq):
-                        tw.level = 0
-                    gobject.timeout_add(500, _all_off, tw)
+        if sw.press == sw.buttons_off[i].spr:
+            sw.buttons_on[i].draw_sprite(1500)
+            inval(sw.buttons_on[i].spr)
+            gobject.idle_add(__play_sound_cb, sw.sound_files[i])
+            gobject.timeout_add(500,hide,sw.buttons_on[i].spr)
+            if sw.seq[sw.level][sw.counter] == i: # correct reponse
+                sw.counter += 1
+                if sw.counter == len(sw.seq[sw.level]):
+                    print "solved level %d" % (sw.level)
+                    _all_on(sw)
+                    sw.counter = 0
+                    sw.level += 1
+                    if sw.level == len(sw.seq):
+                        sw.level = 0
+                    gobject.timeout_add(500, _all_off, sw)
             else: # incorrect response
-                _all_gone(tw)
-                gobject.timeout_add(1000, _all_off, tw)
-                tw.counter = 0
+                _all_gone(sw)
+                gobject.timeout_add(1000, _all_off, sw)
+                sw.counter = 0
 
-    tw.press = None
+    sw.press = None
 
-def _all_on(tw):
-    for i in tw.buttons_off:
+#
+# Turn all the sprites bright
+#
+def _all_on(sw):
+    for i in sw.buttons_off:
         i.draw_sprite(1000)
-    for i in tw.buttons_on:
+    for i in sw.buttons_on:
         i.draw_sprite(1500)
 
-def _all_off(tw):
-    for i in tw.buttons_off:
+#
+# Turn all the sprites dim
+#
+def _all_off(sw):
+    for i in sw.buttons_off:
         i.draw_sprite(1000)
-    for i in tw.buttons_on:
+    for i in sw.buttons_on:
         hide(i.spr)
 
-def _all_gone(tw):
-    for i in tw.buttons_off:
+#
+# Hide all the sprites
+#
+def _all_gone(sw):
+    for i in sw.buttons_off:
         hide(i.spr)
-    for i in tw.buttons_on:
+    for i in sw.buttons_on:
         hide(i.spr)
 
-def _expose_cb(win, event, tw):
-    redrawsprites(tw)
+#
+# Window expose event
+#
+def _expose_cb(win, event, sw):
+    redrawsprites(sw)
     return True
 
-def _destroy_cb(win, event, tw):
+#
+# Shut it down
+#
+def _destroy_cb(win, event, sw):
     gtk.main_quit()
 
+#
+# Generate the sample sequences
+#
 def gen_seq(n):
     seq = []
     for i in range(1,n+1):
