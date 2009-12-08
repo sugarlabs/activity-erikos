@@ -132,7 +132,6 @@ class ErikosActivity(activity.Activity):
             pass
 
     def _play_cb(self, button):
-        print "%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
         window.play_the_game(self.tw)
         return True
 
@@ -160,3 +159,15 @@ class ProjectToolbar(gtk.Toolbar):
         self.insert(self.activity.play, -1)
         self.activity.play.show()
 
+        separator = gtk.SeparatorToolItem()
+        separator.set_draw(True)
+        self.insert(separator, -1)
+        separator.show()
+
+        # Label for showing play status
+        self.activity.level_label = gtk.Label("%s %d" % (_("Level"),1))
+        self.activity.level_label.show()
+        self.activity.level_toolitem = gtk.ToolItem()
+        self.activity.level_toolitem.add(self.activity.level_label)
+        self.insert(self.activity.level_toolitem, -1)
+        self.activity.level_toolitem.show()

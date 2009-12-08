@@ -75,21 +75,22 @@ def new_window(canvas, path, parent=None):
     sw.cm = sw.gc.get_colormap()
     sw.msgcolor = sw.cm.alloc_color('black')
     sw.sprites = []
-    sw.scale = 1
-    sw.level = 0
-    sw.seq = gen_seq(10)
+    sw.scale = 2
+    sw.level = 1
+    sw.seq = gen_seq(30)
     sw.counter = 0
     sw.playpushed = False
 
     # Open the buttons
-    sw.buttons_off = [Sprite(sw,"Aoff",sw.width/2-W/2,H/2,W/2,H/2),\
-                      Sprite(sw,"Boff",sw.width/2-W,H,W/2,H/2),\
-                      Sprite(sw,"Doff",sw.width/2,H,W/2,H/2),\
-                      Sprite(sw,"Coff",sw.width/2-W/2,H+H/2,W/2,H/2)]
-    sw.buttons_on  = [Sprite(sw,"Aon",sw.width/2-W/2,H/2,W/2,H/2),\
-                      Sprite(sw,"Bon",sw.width/2-W,H,W/2,H/2),\
-                      Sprite(sw,"Don",sw.width/2,H,W/2,H/2),\
-                      Sprite(sw,"Con",sw.width/2-W/2,H+H/2,W/2,H/2)]
+    d = W/4 # position fudge factor
+    sw.buttons_off = [Sprite(sw,"Aoff",sw.width/2-W/2,H/2-d,W/2,H/2),\
+                      Sprite(sw,"Boff",sw.width/2-W-d,H,W/2,H/2),\
+                      Sprite(sw,"Doff",sw.width/2+d,H,W/2,H/2),\
+                      Sprite(sw,"Coff",sw.width/2-W/2,H+H/2+d,W/2,H/2)]
+    sw.buttons_on  = [Sprite(sw,"Aon",sw.width/2-W/2,H/2-d,W/2,H/2),\
+                      Sprite(sw,"Bon",sw.width/2-W-d,H,W/2,H/2),\
+                      Sprite(sw,"Don",sw.width/2+d,H,W/2,H/2),\
+                      Sprite(sw,"Con",sw.width/2-W/2,H+H/2+d,W/2,H/2)]
     sw.sounds = ['dog','sheep','cat','bird']
     sw.sound_files = []
 
@@ -123,13 +124,13 @@ def play_the_game(sw):
 #
 def _stepper(sw,i,j):
      if i > 0:
-         hide(sw.buttons_on[sw.seq[sw.level][i-1]].spr)
+         hide(sw.buttons_on[sw.seq[i-1]].spr)
      if j is True:
-         if i < len(sw.seq[sw.level]):
-             sw.buttons_on[sw.seq[sw.level][i]].draw_sprite(1500)
-             inval(sw.buttons_on[sw.seq[sw.level][i]].spr)
+         if i < sw.level*2:
+             sw.buttons_on[sw.seq[i]].draw_sprite(1500)
+             inval(sw.buttons_on[sw.seq[i]].spr)
              gobject.idle_add(__play_sound_cb, 
-                              sw.sound_files[sw.seq[sw.level][i]])
+                              sw.sound_files[sw.seq[i]])
              sw.timeout_id = gobject.timeout_add(1000,_stepper,sw,i+1,False)
          else:
              sw.timeout_id = gobject.timeout_add(1000,_all_off,sw)
@@ -185,21 +186,21 @@ def _button_release_cb(win, event, sw):
             if sw.playpushed is False:
                 sw.press = None
                 return
-            if sw.seq[sw.level][sw.counter] == i: # correct reponse
+            if sw.seq[sw.counter] == i: # correct reponse
                 sw.counter += 1
-                if sw.counter == len(sw.seq[sw.level]):
+                if sw.counter == sw.level*2:
                     gobject.timeout_add(1000, _all_on, sw)
                     sw.counter = 0
                     sw.level += 1
                     gobject.timeout_add(1500, _all_off, sw)
                     sw.activity.level_label.set_text(
-                        "%s %d" % (_("Level"),sw.level+1))
-                    if sw.level < len(sw.seq):
+                        "%s %d" % (_("Level"),sw.level))
+                    if sw.level*2 < len(sw.seq):
                         gobject.timeout_add(3000, play_the_game, sw)
                     else:
                         sw.playpushed = False
                         sw.level = 0
-                        sw.seq = gen_seq(10)
+                        sw.seq = gen_seq(30)
             else: # incorrect response
                 _all_gone(sw)
                 gobject.timeout_add(1000, _all_off, sw)
@@ -252,9 +253,6 @@ def _destroy_cb(win, event, sw):
 def gen_seq(n):
     seq = []
     for i in range(1,n+1):
-        lev = []
-        for j in range(0,i*2):
-            lev.append(int(random.uniform(0,4)))
-        print lev
-        seq.append(lev)
+        seq.append(int(random.uniform(0,4)))
+    print seq
     return seq

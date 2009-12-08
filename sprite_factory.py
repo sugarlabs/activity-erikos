@@ -33,7 +33,7 @@ class Sprite:
     def __init__(self, tw, name, x, y, w, h, name_label=False):
         # create sprite from svg file
         self.spr = sprNew(tw, x, y,
-                          self.load_image(tw.path,name,w,h))
+                          self.load_image(tw.path,name,w*tw.scale,h*tw.scale))
         if name_label is True:
             self.spr.label = name
         else:
