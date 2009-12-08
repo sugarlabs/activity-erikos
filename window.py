@@ -27,9 +27,8 @@ import gtk
 import gobject
 from sound import playWave, audioWrite
 import os
-
+import random
 from gettext import gettext as _
-import math
 
 try:
     from sugar.graphics import style
@@ -78,7 +77,7 @@ def new_window(canvas, path, parent=None):
     tw.sprites = []
     tw.scale = 1
     tw.level = 0
-    tw.seq = [[0,1],[0,1,0,1],[0,1,2,3,0,1,2,3],[0,1,2,3,0,1,2,3,0,1,2,3]]
+    tw.seq = gen_seq(10)
     tw.counter = 0
 
     # Open the sliders
@@ -114,22 +113,26 @@ def play_the_game(tw):
     _all_on(tw)
     for i in tw.buttons_on:
         hide(i.spr)
-    _stepper(tw,0)
+    _stepper(tw,0,True)
     tw.counter = 0
 
 #
 # Display next sound/graphic in sequence
 #
-def _stepper(tw,i):
+def _stepper(tw,i,j):
      if i > 0:
          hide(tw.buttons_on[tw.seq[tw.level][i-1]].spr)
-     if i < len(tw.seq[tw.level]):
-         tw.buttons_on[tw.seq[tw.level][i]].draw_sprite(1500)
-         inval(tw.buttons_on[tw.seq[tw.level][i]].spr)
-         gobject.idle_add(__play_sound_cb, tw.sound_files[tw.seq[tw.level][i]])
-         tw.timeout_id = gobject.timeout_add(1000,_stepper,tw,i+1)
+     if j is True:
+         if i < len(tw.seq[tw.level]):
+             tw.buttons_on[tw.seq[tw.level][i]].draw_sprite(1500)
+             inval(tw.buttons_on[tw.seq[tw.level][i]].spr)
+             gobject.idle_add(__play_sound_cb, 
+                              tw.sound_files[tw.seq[tw.level][i]])
+             tw.timeout_id = gobject.timeout_add(1000,_stepper,tw,i+1,False)
+         else:
+             tw.timeout_id = gobject.timeout_add(1000,_all_off,tw)
      else:
-         tw.timeout_id = gobject.timeout_add(1000,_all_off,tw)
+         tw.timeout_id = gobject.timeout_add(1000,_stepper,tw,i,True)
 
 #
 # Button press
@@ -174,7 +177,6 @@ def _button_release_cb(win, event, tw):
             inval(tw.buttons_on[i].spr)
             gobject.idle_add(__play_sound_cb, tw.sound_files[i])
             gobject.timeout_add(500,hide,tw.buttons_on[i].spr)
-            print "level %d; counter %d; i is %d" % (tw.level,tw.counter,i)
             if tw.seq[tw.level][tw.counter] == i: # correct reponse
                 tw.counter += 1
                 if tw.counter == len(tw.seq[tw.level]):
@@ -216,3 +218,13 @@ def _expose_cb(win, event, tw):
 
 def _destroy_cb(win, event, tw):
     gtk.main_quit()
+
+def gen_seq(n):
+    seq = []
+    for i in range(1,n+1):
+        lev = []
+        for j in range(0,i*2):
+            lev.append(int(random.uniform(0,4)))
+        print lev
+        seq.append(lev)
+    return seq
