@@ -77,7 +77,7 @@ def new_window(canvas, path, parent=None):
     sw.sprites = []
     sw.scale = 2
     sw.level = 1
-    sw.seq = gen_seq(8)
+    sw.seq = gen_seq(40)
     sw.counter = 0
     sw.playpushed = False
 
