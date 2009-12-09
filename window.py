@@ -77,7 +77,7 @@ def new_window(canvas, path, parent=None):
     sw.sprites = []
     sw.scale = 2
     sw.level = 1
-    sw.seq = gen_seq(30)
+    sw.seq = gen_seq(50)
     sw.counter = 0
     sw.playpushed = False
 
@@ -189,18 +189,19 @@ def _button_release_cb(win, event, sw):
             if sw.seq[sw.counter] == i: # correct reponse
                 sw.counter += 1
                 if sw.counter == sw.level*2:
-                    gobject.timeout_add(1000, _all_on, sw)
+                    gobject.timeout_add(1000, _dance, sw, 0)
                     sw.counter = 0
                     sw.level += 1
-                    gobject.timeout_add(1500, _all_off, sw)
                     sw.activity.level_label.set_text(
                         "%s %d" % (_("Level"),sw.level))
                     if sw.level*2 < len(sw.seq):
                         gobject.timeout_add(3000, play_the_game, sw)
                     else:
+                        gobject.timeout_add(1000, _all_on, sw)
                         sw.playpushed = False
                         sw.level = 0
                         sw.seq = gen_seq(30)
+                        gobject.timeout_add(1500, _all_off, sw)
             else: # incorrect response
                 _all_gone(sw)
                 gobject.timeout_add(1000, _all_off, sw)
@@ -216,6 +217,18 @@ def _all_on(sw):
     for i in sw.buttons_on:
         i.draw_sprite(1500)
 
+#
+# Do a little dance
+#
+def _dance(sw, i):
+    o = 10
+    if i < 10:
+        move(sw.buttons_off[0].spr,
+             (sw.buttons_off[0].spr.x,sw.buttons_off[0].spr.y-o))
+        sw.timeout_id = gobject.timeout_add(200,_dance,sw,i+1)
+    else:
+        move(sw.buttons_off[0].spr,
+             (sw.buttons_off[0].spr.x,sw.buttons_off[0].spr.y+10*o))
 #
 # Turn all the sprites dim
 #
