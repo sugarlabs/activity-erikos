@@ -74,6 +74,14 @@ class ErikosActivity(activity.Activity):
             toolbar_box.toolbar.insert(self.play, -1)
             self.play.show()
 
+            # Sound Toggle Button
+            self.sound = ToolButton( "speaker-muted-100" )
+            self.sound.set_tooltip(_('Mute'))
+            self.sound.props.sensitive = True
+            self.sound.connect('clicked', self._sound_cb)
+            toolbar_box.toolbar.insert(self.sound, -1)
+            self.sound.show()
+
             separator = gtk.SeparatorToolItem()
             separator.show()
             toolbar_box.toolbar.insert(separator, -1)
@@ -119,28 +127,39 @@ class ErikosActivity(activity.Activity):
         self.show_all()
 
         # Initialize the canvas
-        self.tw = window.new_window(canvas, \
+        self.sw = window.new_window(canvas, \
                                     os.path.join(activity.get_bundle_path(), \
                                                  'images/'), \
                                     self)
-        self.tw.activity = self
+        self.sw.activity = self
 
         # Read the level from the Journal
         try:
-            tw,level = int(self.metadata['level'])
+            sw.level = int(self.metadata['level'])
         except:
             pass
 
     def _play_cb(self, button):
-        window.play_the_game(self.tw)
+        window.play_the_game(self.sw)
+        return True
+
+    def _sound_cb(self, button):
+        if self.sw.sound is True:
+            self.sound.set_icon("speaker-muted-000")            
+            self.sound.set_tooltip(_('Unmute'))
+            self.sw.sound = False
+        else:
+            self.sound.set_icon("speaker-muted-100")
+            self.sound.set_tooltip(_('Mute'))
+            self.sw.sound = True
         return True
 
     """
     Write the slider positions to the Journal
     """
     def write_file(self, file_path):
-        _logger.debug("Write level: " + str(self.tw.level))
-        self.metadata['level'] = self.tw.level
+        _logger.debug("Write level: " + str(self.sw.level))
+        self.metadata['level'] = self.sw.level
 
 #
 # Project toolbar for pre-0.86 toolbars
@@ -158,6 +177,14 @@ class ProjectToolbar(gtk.Toolbar):
         self.activity.play.connect('clicked', self.activity._play_cb)
         self.insert(self.activity.play, -1)
         self.activity.play.show()
+
+        # Sound toggle button
+        self.activity.sound = ToolButton( "speaker-muted-100" )
+        self.activity.sound.set_tooltip(_('Mute'))
+        self.activity.sound.props.sensitive = True
+        self.activity.sound.connect('clicked', self.activity._sound_cb)
+        self.insert(self.activity.sound, -1)
+        self.activity.sound.show()
 
         separator = gtk.SeparatorToolItem()
         separator.set_draw(True)

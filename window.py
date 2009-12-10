@@ -74,6 +74,7 @@ def new_window(canvas, path, parent=None):
     sw.gc = sw.area.new_gc()
     sw.cm = sw.gc.get_colormap()
     sw.msgcolor = sw.cm.alloc_color('black')
+    sw.sound = True
     sw.sprites = []
     sw.scale = 2
     sw.level = 1
@@ -130,7 +131,7 @@ def _stepper(sw,i,j):
              sw.buttons_on[sw.seq[i]].draw_sprite(1500)
              inval(sw.buttons_on[sw.seq[i]].spr)
              gobject.idle_add(__play_sound_cb, 
-                              sw.sound_files[sw.seq[i]])
+                              sw.sound_files[sw.seq[i]], sw.sound)
              sw.timeout_id = gobject.timeout_add(1000,_stepper,sw,i+1,False)
          else:
              _dance(sw,[0,1,2,3],1,0)
@@ -167,9 +168,10 @@ def _mouse_move_cb(win, event, sw):
 #
 # Play the csound associated with the button
 #
-def __play_sound_cb(sound):
-#    os.system('csound ' + sound + '/temp.csd >/dev/null 2>/dev/null')
-    os.system('csound ' + sound)
+def __play_sound_cb(sound, flag):
+    if flag is True:
+        # os.system('csound ' + sound + '/temp.csd >/dev/null 2>/dev/null')
+        os.system('csound ' + sound)
 
 #
 # Button release -- where the work happens
@@ -181,7 +183,7 @@ def _button_release_cb(win, event, sw):
         if sw.press == sw.buttons_off[i].spr:
             sw.buttons_on[i].draw_sprite(1500)
             inval(sw.buttons_on[i].spr)
-            gobject.idle_add(__play_sound_cb, sw.sound_files[i])
+            gobject.idle_add(__play_sound_cb, sw.sound_files[i], sw.sound)
             gobject.timeout_add(500,hide,sw.buttons_on[i].spr)
             if sw.playpushed is False:
                 sw.press = None
