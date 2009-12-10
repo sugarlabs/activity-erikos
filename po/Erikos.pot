@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-12-09 16:00+0000\n"
+"POT-Creation-Date: 2009-12-10 17:16+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,19 +21,29 @@ msgid "Erikos"
 msgstr ""
 
 #: /home/walter/Desktop/simon/ErikosActivity.py:71
-#: /home/walter/Desktop/simon/ErikosActivity.py:156
+#: /home/walter/Desktop/simon/ErikosActivity.py:175
 msgid "Play"
 msgstr ""
 
-#: /home/walter/Desktop/simon/ErikosActivity.py:82
-#: /home/walter/Desktop/simon/ErikosActivity.py:168
-#: /home/walter/Desktop/simon/window.py:196
-#: /home/walter/Desktop/simon/window.py:205
+#: /home/walter/Desktop/simon/ErikosActivity.py:79
+#: /home/walter/Desktop/simon/ErikosActivity.py:153
+#: /home/walter/Desktop/simon/ErikosActivity.py:183
+msgid "Mute"
+msgstr ""
+
+#: /home/walter/Desktop/simon/ErikosActivity.py:90
+#: /home/walter/Desktop/simon/ErikosActivity.py:195
+#: /home/walter/Desktop/simon/window.py:198
+#: /home/walter/Desktop/simon/window.py:207
 msgid "Level"
 msgstr ""
 
-#: /home/walter/Desktop/simon/ErikosActivity.py:109
+#: /home/walter/Desktop/simon/ErikosActivity.py:117
 msgid "Project"
+msgstr ""
+
+#: /home/walter/Desktop/simon/ErikosActivity.py:149
+msgid "Unmute"
 msgstr ""
 
 #: /home/walter/Desktop/simon/sound.py:184
