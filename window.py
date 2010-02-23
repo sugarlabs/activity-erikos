@@ -36,7 +36,8 @@ try:
 except:
     GRID_CELL_SIZE = 0
 
-from sprite_factory import *
+from sprites import Sprites
+from sprite_factory import Sprite
 
 class swWindow: pass
 
@@ -70,12 +71,12 @@ def new_window(canvas, path, parent=None):
     sw.canvas.connect("motion-notify-event", _mouse_move_cb, sw)
     sw.width = gtk.gdk.screen_width()
     sw.height = gtk.gdk.screen_height()-GRID_CELL_SIZE
-    sw.area = sw.canvas.window
-    sw.gc = sw.area.new_gc()
-    sw.cm = sw.gc.get_colormap()
-    sw.msgcolor = sw.cm.alloc_color('black')
+    sw.sprites = Sprites(sw.canvas)
+    # sw.area = sw.canvas.window
+    # sw.gc = sw.area.new_gc()
+    # sw.cm = sw.gc.get_colormap()
+    # sw.msgcolor = sw.cm.alloc_color('black')
     sw.sound = True
-    sw.sprites = []
     sw.scale = 2
     sw.level = 1
     sw.seq = gen_seq(40)
@@ -115,7 +116,7 @@ def new_window(canvas, path, parent=None):
 def play_the_game(sw):
     sw.playpushed = True
     for i in sw.buttons_on:
-        hide(i.spr)
+        i.spr.hide()
     _stepper(sw,0,False)
     sw.counter = 0
 
@@ -125,11 +126,10 @@ def play_the_game(sw):
 #
 def _stepper(sw,i,j):
      if i > 0:
-         hide(sw.buttons_on[sw.seq[i-1]].spr)
+         sw.buttons_on[sw.seq[i-1]].spr.hide()
      if j is True:
          if i < sw.level*2:
              sw.buttons_on[sw.seq[i]].draw_sprite(1500)
-             inval(sw.buttons_on[sw.seq[i]].spr)
              gobject.idle_add(__play_sound_cb, 
                               sw.sound_files[sw.seq[i]], sw.sound)
              sw.timeout_id = gobject.timeout_add(1000,_stepper,sw,i+1,False)
@@ -145,7 +145,7 @@ def _button_press_cb(win, event, sw):
     win.grab_focus()
     x, y = map(int, event.get_coords())
     sw.dragpos = x
-    spr = findsprite(sw,(x,y))
+    spr = sw.sprites.find_sprite((x,y))
     sw.press = spr
     return True
 
@@ -182,9 +182,8 @@ def _button_release_cb(win, event, sw):
     for i in range (0,4):
         if sw.press == sw.buttons_off[i].spr:
             sw.buttons_on[i].draw_sprite(1500)
-            inval(sw.buttons_on[i].spr)
             gobject.idle_add(__play_sound_cb, sw.sound_files[i], sw.sound)
-            gobject.timeout_add(500,hide,sw.buttons_on[i].spr)
+            gobject.timeout_add(500,sw.buttons_on[i].spr.hide)
             if sw.playpushed is False:
                 sw.press = None
                 return
@@ -228,13 +227,11 @@ def _dance(sw, dancelist, dist, n):
     yo = [-dist,0,0,dist]
     if n < 10:
         for i in dancelist:
-            move(sw.buttons_off[i].spr,
-                 (sw.buttons_off[i].spr.x+xo[i],sw.buttons_off[i].spr.y+yo[i]))
+            sw.buttons_off[i].spr.move_relative((xo[i],yo[i]))
         gobject.timeout_add(30,_dance,sw,dancelist,dist,n+1)
     else:
         for i in dancelist:
-            move(sw.buttons_off[i].spr, (sw.buttons_off[i].spr.x-xo[i]*10,
-                                         sw.buttons_off[i].spr.y-yo[i]*10))
+            sw.buttons_off[i].spr.move_relative((-xo[i]*10,-yo[i]*10))
 
 #
 # Flash
@@ -257,22 +254,22 @@ def _all_off(sw):
     for i in sw.buttons_off:
         i.draw_sprite(1000)
     for i in sw.buttons_on:
-        hide(i.spr)
+        i.spr.hide()
 
 #
 # Hide all the sprites
 #
 def _all_gone(sw):
     for i in sw.buttons_off:
-        hide(i.spr)
+        i.spr.hide()
     for i in sw.buttons_on:
-        hide(i.spr)
+        i.spr.hide()
 
 #
 # Window expose event
 #
 def _expose_cb(win, event, sw):
-    redrawsprites(sw)
+    sw.sprites.redraw_sprites()
     return True
 
 #

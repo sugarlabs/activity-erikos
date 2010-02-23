@@ -24,24 +24,20 @@ import gtk
 import gobject
 import os.path
 
-from sprites import *
+import sprites
 
 #
 # class for defining individual cards
 #
 class Sprite:
-    def __init__(self, tw, name, x, y, w, h, name_label=False):
+    def __init__(self, sw, name, x, y, w, h):
         # create sprite from svg file
-        self.spr = sprNew(tw, x, y,
-                          self.load_image(tw.path,name,w*tw.scale,h*tw.scale))
-        if name_label is True:
-            self.spr.label = name
-        else:
-            self.spr.label = ""
+        self.spr = sprites.Sprite(sw.sprites, x, y,
+                          self.load_image(sw.path,name,w*sw.scale,h*sw.scale))
 
     def draw_sprite(self, layer=1000):
-        setlayer(self.spr, layer)
-        draw(self.spr)
+        self.spr.set_layer(layer)
+        self.spr.draw()
 
     def load_image(self, file, name, w, h):
         return gtk.gdk.pixbuf_new_from_file_at_size(os.path.join(file + 
