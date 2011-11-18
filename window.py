@@ -1,23 +1,15 @@
 # -*- coding: utf-8 -*-
-#Copyright (c) 2009, Walter Bender
+#Copyright (c) 2009, 2011 Walter Bender
 
-#Permission is hereby granted, free of charge, to any person obtaining a copy
-#of this software and associated documentation files (the "Software"), to deal
-#in the Software without restriction, including without limitation the rights
-#to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-#copies of the Software, and to permit persons to whom the Software is
-#furnished to do so, subject to the following conditions:
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+# You should have received a copy of the GNU General Public License
+# along with this library; if not, write to the Free Software
+# Foundation, 51 Franklin Street, Suite 500 Boston, MA 02110-1335 USA
 
-#The above copyright notice and this permission notice shall be included in
-#all copies or substantial portions of the Software.
-
-#THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-#IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-#FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-#AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-#LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-#OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-#THE SOFTWARE.
 
 from constants import *
 from time import *
@@ -72,10 +64,6 @@ def new_window(canvas, path, parent=None):
     sw.width = gtk.gdk.screen_width()
     sw.height = gtk.gdk.screen_height()-GRID_CELL_SIZE
     sw.sprites = Sprites(sw.canvas)
-    # sw.area = sw.canvas.window
-    # sw.gc = sw.area.new_gc()
-    # sw.cm = sw.gc.get_colormap()
-    # sw.msgcolor = sw.cm.alloc_color('black')
     sw.sound = True
     sw.scale = 2
     sw.level = 1
@@ -268,9 +256,20 @@ def _all_gone(sw):
 #
 # Window expose event
 #
-def _expose_cb(win, event, sw):
-    sw.sprites.redraw_sprites()
+def _expose_cb(sw, win, event):
+    ''' Callback to handle window expose events '''
+    sw.do_expose_event(event)
     return True
+
+def do_expose_event(sw, event):
+    ''' Handle the expose-event by drawing '''
+    # Restrict Cairo to the exposed area
+    cr = sw.canvas.window.cairo_create()
+    cr.rectangle(event.area.x, event.area.y,
+                 event.area.width, event.area.height)
+    cr.clip()
+    # Refresh sprite list
+    sw.sprites.redraw_sprites(cr=cr)
 
 #
 # Shut it down
