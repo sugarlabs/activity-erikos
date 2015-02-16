@@ -6,3 +6,4 @@ bundle_id = org.sugarlabs.ErikosActivity
 exec = sugar-activity ErikosActivity.ErikosActivity
 icon = activity-erikos
 show_launcher = yes
+category = game
