@@ -256,9 +256,9 @@ def _all_gone(sw):
 #
 # Window expose event
 #
-def _expose_cb(sw, win, event):
+def _expose_cb(win, event, sw):
     ''' Callback to handle window expose events '''
-    sw.do_expose_event(event)
+    do_expose_event(sw, event)
     return True
 
 def do_expose_event(sw, event):
