@@ -1,9 +1,10 @@
 [Activity]
 name = Erikos
-activity_version = 8
+activity_version = 9
 license = GPLv3
 bundle_id = org.sugarlabs.ErikosActivity
 exec = sugar-activity ErikosActivity.ErikosActivity
 icon = activity-erikos
 show_launcher = yes
 category = game
+repository = https://github.com/walterbender/erikos
