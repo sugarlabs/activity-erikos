@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-08-03 10:31-0400\n"
-"PO-Revision-Date: 2015-02-17 20:01+0000\n"
+"PO-Revision-Date: 2017-02-17 11:18+0000\n"
 "Last-Translator: Moo <hazap@hotmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: lt\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "(n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: Pootle 2.5.1.1\n"
-"X-POOTLE-MTIME: 1424203277.000000\n"
+"X-POOTLE-MTIME: 1487330330.000000\n"
 
 #: activity/activity.info:2
 msgid "Erikos"
@@ -33,7 +33,7 @@ msgstr "Prašome įdiegti TamTamEdit garso biblioteką."
 
 #: ErikosActivity.py:71 ErikosActivity.py:175
 msgid "Play"
-msgstr ""
+msgstr "Groti"
 
 #: ErikosActivity.py:79 ErikosActivity.py:153 ErikosActivity.py:183
 msgid "Mute"
