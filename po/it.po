@@ -2,45 +2,48 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-08-03 10:31-0400\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"PO-Revision-Date: 2017-10-11 08:56+0000\n"
+"Last-Translator: elcico <elcico2001@yahoo.it>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"Language: it\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Translate Toolkit 1.7.0\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Pootle 2.5.1.1\n"
+"X-POOTLE-MTIME: 1507712203.000000\n"
 
 #: activity/activity.info:2
 msgid "Erikos"
-msgstr ""
+msgstr "Erikos"
 
 #: window.py:197 window.py:206 ErikosActivity.py:90 ErikosActivity.py:195
+#, fuzzy
 msgid "Level"
-msgstr ""
+msgstr "Livello"
 
 #: sound.py:184
 msgid "Please install TamTamEdit's sound library."
-msgstr ""
+msgstr "Per favore installa la libreria audio TamTamEdit."
 
 #: ErikosActivity.py:71 ErikosActivity.py:175
 msgid "Play"
-msgstr ""
+msgstr "Riproduci"
 
 #: ErikosActivity.py:79 ErikosActivity.py:153 ErikosActivity.py:183
 msgid "Mute"
-msgstr ""
+msgstr "Muto"
 
 #: ErikosActivity.py:117
+#, fuzzy
 msgid "Project"
-msgstr ""
+msgstr "Progetto"
 
 #: ErikosActivity.py:149
 msgid "Unmute"
-msgstr ""
+msgstr "Riattiva audio"
