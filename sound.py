@@ -191,7 +191,7 @@ def audioOut(file=None):
     global temp_path
     import os
     if temp_path is None:
-        from sugar import env
+        from sugar3 import env
         import os.path
         try:
             temp_path = os.path.join(activity.get_activity_root(), "instance")

@@ -10,25 +10,26 @@
 # along with this library; if not, write to the Free Software
 # Foundation, 51 Franklin Street, Suite 500 Boston, MA 02110-1335 USA
 
-import pygtk
-pygtk.require('2.0')
-import gtk
-import gobject
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk
+from gi.repository import Gdk
+from gi.repository import GObject
 
-import sugar
-from sugar.activity import activity
+import sugar3
+from sugar3.activity import activity
 try: # 0.86+ toolbar widgets
-    from sugar.bundle.activitybundle import ActivityBundle
-    from sugar.activity.widgets import ActivityToolbarButton
-    from sugar.activity.widgets import StopButton
-    from sugar.graphics.toolbarbox import ToolbarBox
-    from sugar.graphics.toolbarbox import ToolbarButton
+    from sugar3.bundle.activitybundle import ActivityBundle
+    from sugar3.activity.widgets import ActivityToolbarButton
+    from sugar3.activity.widgets import StopButton
+    from sugar3.graphics.toolbarbox import ToolbarBox
+    from sugar3.graphics.toolbarbox import ToolbarButton
 except ImportError:
     pass
-from sugar.graphics.toolbutton import ToolButton
-from sugar.graphics.menuitem import MenuItem
-from sugar.graphics.icon import Icon
-from sugar.datastore import datastore
+from sugar3.graphics.toolbutton import ToolButton
+from sugar3.graphics.menuitem import MenuItem
+from sugar3.graphics.icon import Icon
+from sugar3.datastore import datastore
 
 from gettext import gettext as _
 import locale
@@ -73,18 +74,18 @@ class ErikosActivity(activity.Activity):
             toolbar_box.toolbar.insert(self.sound, -1)
             self.sound.show()
 
-            separator = gtk.SeparatorToolItem()
+            separator = Gtk.SeparatorToolItem()
             separator.show()
             toolbar_box.toolbar.insert(separator, -1)
 
             # Label for showing level
-            self.level_label = gtk.Label("%s %d" % (_("Level"),1))
+            self.level_label = Gtk.Label(label="%s %d" % (_("Level"),1))
             self.level_label.show()
-            level_toolitem = gtk.ToolItem()
+            level_toolitem = Gtk.ToolItem()
             level_toolitem.add(self.level_label)
             toolbar_box.toolbar.insert(level_toolitem,-1)
 
-            separator = gtk.SeparatorToolItem()
+            separator = Gtk.SeparatorToolItem()
             separator.props.draw = False
             separator.set_expand(True)
             separator.show()
@@ -110,9 +111,9 @@ class ErikosActivity(activity.Activity):
             self.toolbox.show()
 
         # Create a canvas
-        canvas = gtk.DrawingArea()
-        canvas.set_size_request(gtk.gdk.screen_width(), \
-                                gtk.gdk.screen_height())
+        canvas = Gtk.DrawingArea()
+        canvas.set_size_request(Gdk.Screen.width(), \
+                                Gdk.Screen.height())
         self.set_canvas(canvas)
         canvas.show()
         self.show_all()
@@ -136,11 +137,11 @@ class ErikosActivity(activity.Activity):
 
     def _sound_cb(self, button):
         if self.sw.sound is True:
-            self.sound.set_icon("speaker-muted-000")            
+            self.sound.set_icon_name("speaker-muted-000")
             self.sound.set_tooltip(_('Unmute'))
             self.sw.sound = False
         else:
-            self.sound.set_icon("speaker-muted-100")
+            self.sound.set_icon_name("speaker-muted-100")
             self.sound.set_tooltip(_('Mute'))
             self.sw.sound = True
         return True
@@ -155,10 +156,10 @@ class ErikosActivity(activity.Activity):
 #
 # Project toolbar for pre-0.86 toolbars
 #
-class ProjectToolbar(gtk.Toolbar):
+class ProjectToolbar(Gtk.Toolbar):
 
     def __init__(self, pc):
-        gtk.Toolbar.__init__(self)
+        GObject.GObject.__init__(self)
         self.activity = pc
 
         # Play button
@@ -177,15 +178,15 @@ class ProjectToolbar(gtk.Toolbar):
         self.insert(self.activity.sound, -1)
         self.activity.sound.show()
 
-        separator = gtk.SeparatorToolItem()
+        separator = Gtk.SeparatorToolItem()
         separator.set_draw(True)
         self.insert(separator, -1)
         separator.show()
 
         # Label for showing play status
-        self.activity.level_label = gtk.Label("%s %d" % (_("Level"),1))
+        self.activity.level_label = Gtk.Label(label="%s %d" % (_("Level"),1))
         self.activity.level_label.show()
-        self.activity.level_toolitem = gtk.ToolItem()
+        self.activity.level_toolitem = Gtk.ToolItem()
         self.activity.level_toolitem.add(self.activity.level_label)
         self.insert(self.activity.level_toolitem, -1)
         self.activity.level_toolitem.show()
