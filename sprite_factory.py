@@ -9,10 +9,11 @@
 # along with this library; if not, write to the Free Software
 # Foundation, 51 Franklin Street, Suite 500 Boston, MA 02110-1335 USA
 
-import pygtk
-pygtk.require('2.0')
-import gtk
-import gobject
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk
+from gi.repository import GObject
+from gi.repository import GdkPixbuf
 import os.path
 
 import sprites
@@ -31,7 +32,7 @@ class Sprite:
         self.spr.draw()
 
     def load_image(self, file, name, w, h):
-        return gtk.gdk.pixbuf_new_from_file_at_size(os.path.join(file + 
+        return GdkPixbuf.Pixbuf.new_from_file_at_size(os.path.join(file + 
                                                                  name + 
                                                                  '.svg'),
                                                     w, h)
