@@ -12,7 +12,6 @@
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
-from gi.repository import GObject
 from gi.repository import GdkPixbuf
 import os.path
 
