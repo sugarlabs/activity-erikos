@@ -43,6 +43,8 @@ class ErikosActivity(activity.Activity):
 
     def __init__(self, handle):
         super(ErikosActivity,self).__init__(handle)
+        self.max_participants = 1
+
         toolbar_box = ToolbarBox()
 
         # Buttons added to the Activity toolbar
