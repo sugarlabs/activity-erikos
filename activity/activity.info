@@ -1,7 +1,7 @@
 [Activity]
 name = Erikos
 activity_version = 9
-license = GPLv3
+license = GPLv3+;MIT
 bundle_id = org.sugarlabs.ErikosActivity
 exec = sugar-activity ErikosActivity.ErikosActivity
 icon = activity-erikos
