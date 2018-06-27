@@ -7,4 +7,4 @@ exec = sugar-activity ErikosActivity.ErikosActivity
 icon = activity-erikos
 show_launcher = yes
 category = game
-repository = https://github.com/walterbender/erikos
+repository = https://github.com/sugarlabs/activity-erikos
