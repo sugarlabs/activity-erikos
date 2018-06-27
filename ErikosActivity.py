@@ -42,7 +42,7 @@ import window
 class ErikosActivity(activity.Activity):
 
     def __init__(self, handle):
-        super(ErikosActivity,self).__init__(handle)
+        activity.Activity.__init__(self, handle)
         self.max_participants = 1
 
         toolbar_box = ToolbarBox()
