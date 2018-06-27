@@ -18,7 +18,7 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 from gi.repository import Gdk
 from gi.repository import GdkPixbuf
-from gi.repository import GObject
+from gi.repository import GLib
 from sound import playWave, audioWrite
 import os
 import random
@@ -120,13 +120,13 @@ def _stepper(sw,i,j):
      if j is True:
          if i < sw.level*2:
              sw.buttons_on[sw.seq[i]].draw_sprite(1500)
-             GObject.idle_add(__play_sound_cb,
+             GLib.idle_add(__play_sound_cb,
                               sw.sound_files[sw.seq[i]], sw.sound)
-             sw.timeout_id = GObject.timeout_add(1000,_stepper,sw,i+1,False)
+             sw.timeout_id = GLib.timeout_add(1000,_stepper,sw,i+1,False)
          else:
              _dance(sw,[0,1,2,3],1,0)
      else:
-         sw.timeout_id = GObject.timeout_add(1000,_stepper,sw,i,True)
+         sw.timeout_id = GLib.timeout_add(1000,_stepper,sw,i,True)
 
 #
 # Button press
@@ -172,23 +172,23 @@ def _button_release_cb(win, event, sw):
     for i in range (0,4):
         if sw.press == sw.buttons_off[i].spr:
             sw.buttons_on[i].draw_sprite(1500)
-            GObject.idle_add(__play_sound_cb, sw.sound_files[i], sw.sound)
-            GObject.timeout_add(500,sw.buttons_on[i].spr.hide)
+            GLib.idle_add(__play_sound_cb, sw.sound_files[i], sw.sound)
+            GLib.timeout_add(500,sw.buttons_on[i].spr.hide)
             if sw.playpushed is False:
                 sw.press = None
                 return
             if sw.seq[sw.counter] == i: # correct reponse
                 sw.counter += 1
                 if sw.counter == sw.level*2:
-                    GObject.timeout_add(1000, _dance, sw, [i], 10, 0)
+                    GLib.timeout_add(1000, _dance, sw, [i], 10, 0)
                     sw.counter = 0
                     sw.level += 1
                     sw.activity.level_label.set_text(
                         "%s %d" % (_("Level"),sw.level))
                     if sw.level*2 < len(sw.seq):
-                        GObject.timeout_add(3000, play_the_game, sw)
+                        GLib.timeout_add(3000, play_the_game, sw)
                     else: # game over
-                        GObject.timeout_add(2000, _flash, sw, 7, True)
+                        GLib.timeout_add(2000, _flash, sw, 7, True)
                         sw.playpushed = False
                         sw.level = 1
                         sw.seq = gen_seq(30)
@@ -196,7 +196,7 @@ def _button_release_cb(win, event, sw):
                             "%s %d" % (_("Level"),sw.level))
             else: # incorrect response
                 _all_gone(sw)
-                GObject.timeout_add(1000, _all_off, sw)
+                GLib.timeout_add(1000, _all_off, sw)
                 sw.counter = 0
     sw.press = None
 
@@ -218,7 +218,7 @@ def _dance(sw, dancelist, dist, n):
     if n < 10:
         for i in dancelist:
             sw.buttons_off[i].spr.move_relative((xo[i],yo[i]))
-        GObject.timeout_add(30,_dance,sw,dancelist,dist,n+1)
+        GLib.timeout_add(30,_dance,sw,dancelist,dist,n+1)
     else:
         for i in dancelist:
             sw.buttons_off[i].spr.move_relative((-xo[i]*10,-yo[i]*10))
@@ -232,10 +232,10 @@ def _flash(sw, n, i):
         return
     if i is True:
         _all_on(sw)
-        GObject.timeout_add(200,_flash,sw,n-1,False)
+        GLib.timeout_add(200,_flash,sw,n-1,False)
     else:
         _all_off(sw)
-        GObject.timeout_add(200,_flash,sw,n,True)
+        GLib.timeout_add(200,_flash,sw,n,True)
 
 #
 # Turn all the sprites dim
