@@ -16,16 +16,12 @@ from gi.repository import Gtk
 from gi.repository import Gdk
 from gi.repository import GObject
 
-import sugar3
 from sugar3.activity import activity
-try: # 0.86+ toolbar widgets
-    from sugar3.bundle.activitybundle import ActivityBundle
-    from sugar3.activity.widgets import ActivityToolbarButton
-    from sugar3.activity.widgets import StopButton
-    from sugar3.graphics.toolbarbox import ToolbarBox
-    from sugar3.graphics.toolbarbox import ToolbarButton
-except ImportError:
-    pass
+from sugar3.bundle.activitybundle import ActivityBundle
+from sugar3.activity.widgets import ActivityToolbarButton
+from sugar3.activity.widgets import StopButton
+from sugar3.graphics.toolbarbox import ToolbarBox
+from sugar3.graphics.toolbarbox import ToolbarButton
 from sugar3.graphics.toolbutton import ToolButton
 from sugar3.graphics.menuitem import MenuItem
 from sugar3.graphics.icon import Icon
@@ -48,67 +44,54 @@ class ErikosActivity(activity.Activity):
 
     def __init__(self, handle):
         super(ErikosActivity,self).__init__(handle)
+        toolbar_box = ToolbarBox()
 
-        try:
-            # Use 0.86 toolbar design
-            toolbar_box = ToolbarBox()
+        # Buttons added to the Activity toolbar
+        activity_button = ActivityToolbarButton(self)
+        toolbar_box.toolbar.insert(activity_button, 0)
+        activity_button.show()
 
-            # Buttons added to the Activity toolbar
-            activity_button = ActivityToolbarButton(self)
-            toolbar_box.toolbar.insert(activity_button, 0)
-            activity_button.show()
+        # Play Button
+        self.play = ToolButton( "media-playback-start" )
+        self.play.set_tooltip(_('Play'))
+        self.play.props.sensitive = True
+        self.play.connect('clicked', self._play_cb)
+        toolbar_box.toolbar.insert(self.play, -1)
+        self.play.show()
 
-            # Play Button
-            self.play = ToolButton( "media-playback-start" )
-            self.play.set_tooltip(_('Play'))
-            self.play.props.sensitive = True
-            self.play.connect('clicked', self._play_cb)
-            toolbar_box.toolbar.insert(self.play, -1)
-            self.play.show()
+        # Sound Toggle Button
+        self.sound = ToolButton( "speaker-muted-100" )
+        self.sound.set_tooltip(_('Mute'))
+        self.sound.props.sensitive = True
+        self.sound.connect('clicked', self._sound_cb)
+        toolbar_box.toolbar.insert(self.sound, -1)
+        self.sound.show()
 
-            # Sound Toggle Button
-            self.sound = ToolButton( "speaker-muted-100" )
-            self.sound.set_tooltip(_('Mute'))
-            self.sound.props.sensitive = True
-            self.sound.connect('clicked', self._sound_cb)
-            toolbar_box.toolbar.insert(self.sound, -1)
-            self.sound.show()
+        separator = Gtk.SeparatorToolItem()
+        separator.show()
+        toolbar_box.toolbar.insert(separator, -1)
 
-            separator = Gtk.SeparatorToolItem()
-            separator.show()
-            toolbar_box.toolbar.insert(separator, -1)
+        # Label for showing level
+        self.level_label = Gtk.Label(label="%s %d" % (_("Level"),1))
+        self.level_label.show()
+        level_toolitem = Gtk.ToolItem()
+        level_toolitem.add(self.level_label)
+        toolbar_box.toolbar.insert(level_toolitem,-1)
 
-            # Label for showing level
-            self.level_label = Gtk.Label(label="%s %d" % (_("Level"),1))
-            self.level_label.show()
-            level_toolitem = Gtk.ToolItem()
-            level_toolitem.add(self.level_label)
-            toolbar_box.toolbar.insert(level_toolitem,-1)
+        separator = Gtk.SeparatorToolItem()
+        separator.props.draw = False
+        separator.set_expand(True)
+        separator.show()
+        toolbar_box.toolbar.insert(separator, -1)
 
-            separator = Gtk.SeparatorToolItem()
-            separator.props.draw = False
-            separator.set_expand(True)
-            separator.show()
-            toolbar_box.toolbar.insert(separator, -1)
+        # The ever-present Stop Button
+        stop_button = StopButton(self)
+        stop_button.props.accelerator = '<Ctrl>Q'
+        toolbar_box.toolbar.insert(stop_button, -1)
+        stop_button.show()
 
-            # The ever-present Stop Button
-            stop_button = StopButton(self)
-            stop_button.props.accelerator = '<Ctrl>Q'
-            toolbar_box.toolbar.insert(stop_button, -1)
-            stop_button.show()
-
-            self.set_toolbar_box(toolbar_box)
-            toolbar_box.show()
-
-        except NameError:
-            # Use pre-0.86 toolbar design
-            self.toolbox = activity.ActivityToolbox(self)
-            self.set_toolbox(self.toolbox)
-
-            self.projectToolbar = ProjectToolbar(self)
-            self.toolbox.add_toolbar( _('Project'), self.projectToolbar )
-
-            self.toolbox.show()
+        self.set_toolbar_box(toolbar_box)
+        toolbar_box.show()
 
         # Create a canvas
         canvas = Gtk.DrawingArea()
@@ -152,41 +135,3 @@ class ErikosActivity(activity.Activity):
     def write_file(self, file_path):
         _logger.debug("Write level: " + str(self.sw.level))
         self.metadata['level'] = self.sw.level
-
-#
-# Project toolbar for pre-0.86 toolbars
-#
-class ProjectToolbar(Gtk.Toolbar):
-
-    def __init__(self, pc):
-        GObject.GObject.__init__(self)
-        self.activity = pc
-
-        # Play button
-        self.activity.play = ToolButton( "media-playback-start" )
-        self.activity.play.set_tooltip(_('Play'))
-        self.activity.play.props.sensitive = True
-        self.activity.play.connect('clicked', self.activity._play_cb)
-        self.insert(self.activity.play, -1)
-        self.activity.play.show()
-
-        # Sound toggle button
-        self.activity.sound = ToolButton( "speaker-muted-100" )
-        self.activity.sound.set_tooltip(_('Mute'))
-        self.activity.sound.props.sensitive = True
-        self.activity.sound.connect('clicked', self.activity._sound_cb)
-        self.insert(self.activity.sound, -1)
-        self.activity.sound.show()
-
-        separator = Gtk.SeparatorToolItem()
-        separator.set_draw(True)
-        self.insert(separator, -1)
-        separator.show()
-
-        # Label for showing play status
-        self.activity.level_label = Gtk.Label(label="%s %d" % (_("Level"),1))
-        self.activity.level_label.show()
-        self.activity.level_toolitem = Gtk.ToolItem()
-        self.activity.level_toolitem.add(self.activity.level_label)
-        self.insert(self.activity.level_toolitem, -1)
-        self.activity.level_toolitem.show()
