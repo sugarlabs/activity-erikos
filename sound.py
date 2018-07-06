@@ -12,9 +12,9 @@ fnum = [100]
 """XXX: This function seems to be broken. (CSA)
 def quit(self):
     perf.Stop()
-    perf.Join()                                    
+    perf.Join()
     cs.Reset()
-    cs = None            
+    cs = None
 """
 def finddir():
     for d in dirs:
@@ -166,18 +166,18 @@ def playWave(sound='horse', pitch=1, amplitude=1, loop=False, duration=1, startt
 
     # orchlines = []
     if not 9 in instrlist:
-        orchlines.append("instr 9\n") 
+        orchlines.append("instr 9\n")
         orchlines.append("kpitenv oscil 1, 1/p3, p8\n")
         orchlines.append("aenv oscil 1, 1/p3, p9\n")
-        orchlines.append("asig diskin p4, p5*kpitenv, 0, p7\n") 
+        orchlines.append("asig diskin p4, p5*kpitenv, 0, p7\n")
         orchlines.append("out asig*p6*aenv\n")
         orchlines.append("endin\n\n")
         instrlist.append(9)
 
     # scorelines = []
     scorelines.append('i9 %f %f "%s" %s %s %s %s %s\n' % (float(starttime), float(duration), fullname, str(pitch), str(amplitude), str(lp), str(pitenv), str(ampenv)))
-    print scorelines
-    
+    print (scorelines)
+
 def getSoundList():
     list = finddir()
     if list == None:
@@ -231,7 +231,7 @@ def audioOut(file=None):
     csd.write("\n</CsScore>\n")
     csd.write("\n</CsoundSynthesizer>")
     csd.close()
- 
+
     os.system('csound ' + path + '/temp.csd >/dev/null 2>/dev/null')
     # os.system('csound ' + path + '/temp.csd')
 
@@ -265,4 +265,3 @@ def audioWrite(file):
     csd.write("\n</CsScore>\n")
     csd.write("\n</CsoundSynthesizer>")
     csd.close()
- 
