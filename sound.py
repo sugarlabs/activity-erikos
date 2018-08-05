@@ -181,7 +181,7 @@ def playWave(sound='horse', pitch=1, amplitude=1, loop=False, duration=1, startt
 def getSoundList():
     list = finddir()
     if list == None:
-        print _("Please install TamTamEdit's sound library.")
+        print ("Please install TamTamEdit's sound library.")
         sys.exit(0)
     return sorted(os.listdir(list))
 
