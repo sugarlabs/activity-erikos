@@ -330,6 +330,8 @@ class Sprite:
     def draw(self, cr=None):
         ''' Draw the sprite (and label) '''
         if cr is None:
+            cr = self._sprites.cr
+        if cr is None:
             print 'sprite.draw: no Cairo context.'
             return
         for i, surface in enumerate(self.cached_surfaces):
