@@ -176,12 +176,12 @@ def playWave(sound='horse', pitch=1, amplitude=1, loop=False, duration=1, startt
 
     # scorelines = []
     scorelines.append('i9 %f %f "%s" %s %s %s %s %s\n' % (float(starttime), float(duration), fullname, str(pitch), str(amplitude), str(lp), str(pitenv), str(ampenv)))
-    print scorelines
+    print(scorelines)
     
 def getSoundList():
     list = finddir()
     if list == None:
-        print _("Please install TamTamEdit's sound library.")
+        print(_("Please install TamTamEdit's sound library."))
         sys.exit(0)
     return sorted(os.listdir(list))
 
