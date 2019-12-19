@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-03 10:31-0400\n"
+"POT-Creation-Date: 2019-12-19 11:48+1100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,26 +21,22 @@ msgstr ""
 msgid "Erikos"
 msgstr ""
 
-#: window.py:197 window.py:206 ErikosActivity.py:90 ErikosActivity.py:195
+#: ErikosActivity.py:57
+msgid "Play"
+msgstr ""
+
+#: ErikosActivity.py:65 ErikosActivity.py:129
+msgid "Mute"
+msgstr ""
+
+#: ErikosActivity.py:76 window.py:187 window.py:196
 msgid "Level"
+msgstr ""
+
+#: ErikosActivity.py:125
+msgid "Unmute"
 msgstr ""
 
 #: sound.py:184
 msgid "Please install TamTamEdit's sound library."
-msgstr ""
-
-#: ErikosActivity.py:71 ErikosActivity.py:175
-msgid "Play"
-msgstr ""
-
-#: ErikosActivity.py:79 ErikosActivity.py:153 ErikosActivity.py:183
-msgid "Mute"
-msgstr ""
-
-#: ErikosActivity.py:117
-msgid "Project"
-msgstr ""
-
-#: ErikosActivity.py:149
-msgid "Unmute"
 msgstr ""
