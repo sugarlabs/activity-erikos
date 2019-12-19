@@ -133,7 +133,7 @@ def _stepper(sw,i,j):
 #
 def _button_press_cb(win, event, sw):
     win.grab_focus()
-    x, y = map(int, event.get_coords())
+    x, y = list(map(int, event.get_coords()))
     sw.dragpos = x
     spr = sw.sprites.find_sprite((x,y))
     sw.press = spr
@@ -148,7 +148,7 @@ def _mouse_move_cb(win, event, sw):
         return True
 
     win.grab_focus()
-    x, y = map(int, event.get_coords())
+    x, y = list(map(int, event.get_coords()))
 
     dx = x-sw.dragpos
 
@@ -286,5 +286,5 @@ def gen_seq(n):
     seq = []
     for i in range(1,n+1):
         seq.append(int(random.uniform(0,4)))
-    print seq
+    print(seq)
     return seq
